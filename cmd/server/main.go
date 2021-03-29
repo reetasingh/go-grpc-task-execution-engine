@@ -20,13 +20,18 @@ type server struct {
 }
 
 func (s *server) ExecuteTask(ctx context.Context, in *pb.TaskExecutionRequest) (*pb.TaskResponse, error) {
-	log.Printf("Received: %v", in.GetName())
+	log.Printf("Received Request to Execute Task: %v", in.GetName())
 	return &pb.TaskResponse{Uuid: "1", Status: "RECEIVED", Details: "Recieved by Server"}, nil
 }
 
 func (s *server) GetTaskStatus(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
-	log.Printf("Received: %v", in.GetUuid())
-	return &pb.TaskResponse{Uuid: "1", Status: "RECEIVED", Details: "Recieved by Server"}, nil
+	log.Printf("Received Request for Task Status: %v", in.GetUuid())
+	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "RECEIVED", Details: "Recieved by Server"}, nil
+}
+
+func (s *server) CancelTask(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
+	log.Printf("Received Request to Cancel Task: %v", in.GetUuid())
+	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "CANCELLED", Details: "Task Successfully Cancelled"}, nil
 }
 
 func main() {
