@@ -8,7 +8,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	pb "go-grpc-task-execution-engine/pkg/helloworld/helloworld"
+	pb "go-grpc-task-execution-engine/pkg/helloworld"
 )
 
 const (
