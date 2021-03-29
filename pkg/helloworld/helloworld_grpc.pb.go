@@ -21,6 +21,7 @@ type TaskExecutionClient interface {
 	// Sends a greeting
 	ExecuteTask(ctx context.Context, in *TaskExecutionRequest, opts ...grpc.CallOption) (*TaskResponse, error)
 	GetTaskStatus(ctx context.Context, in *TaskStatusRequest, opts ...grpc.CallOption) (*TaskResponse, error)
+	CancelTask(ctx context.Context, in *TaskStatusRequest, opts ...grpc.CallOption) (*TaskResponse, error)
 }
 
 type taskExecutionClient struct {
@@ -49,6 +50,15 @@ func (c *taskExecutionClient) GetTaskStatus(ctx context.Context, in *TaskStatusR
 	return out, nil
 }
 
+func (c *taskExecutionClient) CancelTask(ctx context.Context, in *TaskStatusRequest, opts ...grpc.CallOption) (*TaskResponse, error) {
+	out := new(TaskResponse)
+	err := c.cc.Invoke(ctx, "/helloworld.TaskExecution/CancelTask", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskExecutionServer is the server API for TaskExecution service.
 // All implementations must embed UnimplementedTaskExecutionServer
 // for forward compatibility
@@ -56,6 +66,7 @@ type TaskExecutionServer interface {
 	// Sends a greeting
 	ExecuteTask(context.Context, *TaskExecutionRequest) (*TaskResponse, error)
 	GetTaskStatus(context.Context, *TaskStatusRequest) (*TaskResponse, error)
+	CancelTask(context.Context, *TaskStatusRequest) (*TaskResponse, error)
 	mustEmbedUnimplementedTaskExecutionServer()
 }
 
@@ -68,6 +79,9 @@ func (UnimplementedTaskExecutionServer) ExecuteTask(context.Context, *TaskExecut
 }
 func (UnimplementedTaskExecutionServer) GetTaskStatus(context.Context, *TaskStatusRequest) (*TaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTaskStatus not implemented")
+}
+func (UnimplementedTaskExecutionServer) CancelTask(context.Context, *TaskStatusRequest) (*TaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelTask not implemented")
 }
 func (UnimplementedTaskExecutionServer) mustEmbedUnimplementedTaskExecutionServer() {}
 
@@ -118,6 +132,24 @@ func _TaskExecution_GetTaskStatus_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskExecution_CancelTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskExecutionServer).CancelTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/helloworld.TaskExecution/CancelTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskExecutionServer).CancelTask(ctx, req.(*TaskStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskExecution_ServiceDesc is the grpc.ServiceDesc for TaskExecution service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,6 +164,10 @@ var TaskExecution_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTaskStatus",
 			Handler:    _TaskExecution_GetTaskStatus_Handler,
+		},
+		{
+			MethodName: "CancelTask",
+			Handler:    _TaskExecution_CancelTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
