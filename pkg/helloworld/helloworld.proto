@@ -5,17 +5,25 @@ package helloworld;
 option go_package = "go-grpc-task-execution-engine/pkg/helloworld";
 
 // The greeting service definition.
-service Greeter {
+service TaskExecution {
   // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc ExecuteTask (TaskExecutionRequest) returns (TaskResponse) {}
+  rpc GetTaskStatus (TaskStatusRequest) returns (TaskResponse) {}
 }
 
 // The request message containing the user's name.
-message HelloRequest {
+message TaskExecutionRequest {
   string name = 1;
 }
 
+// The request message containing the user's name.
+message TaskStatusRequest {
+  string uuid = 1;
+}
+
 // The response message containing the greetings
-message HelloReply {
-  string message = 1;
+message TaskResponse {
+  string uuid = 1;
+  string status = 2;
+  string details = 3;
 }

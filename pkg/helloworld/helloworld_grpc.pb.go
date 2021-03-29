@@ -14,88 +14,124 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GreeterClient is the client API for Greeter service.
+// TaskExecutionClient is the client API for TaskExecution service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GreeterClient interface {
+type TaskExecutionClient interface {
 	// Sends a greeting
-	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
+	ExecuteTask(ctx context.Context, in *TaskExecutionRequest, opts ...grpc.CallOption) (*TaskResponse, error)
+	GetTaskStatus(ctx context.Context, in *TaskStatusRequest, opts ...grpc.CallOption) (*TaskResponse, error)
 }
 
-type greeterClient struct {
+type taskExecutionClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
-	return &greeterClient{cc}
+func NewTaskExecutionClient(cc grpc.ClientConnInterface) TaskExecutionClient {
+	return &taskExecutionClient{cc}
 }
 
-func (c *greeterClient) SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error) {
-	out := new(HelloReply)
-	err := c.cc.Invoke(ctx, "/helloworld.Greeter/SayHello", in, out, opts...)
+func (c *taskExecutionClient) ExecuteTask(ctx context.Context, in *TaskExecutionRequest, opts ...grpc.CallOption) (*TaskResponse, error) {
+	out := new(TaskResponse)
+	err := c.cc.Invoke(ctx, "/helloworld.TaskExecution/ExecuteTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GreeterServer is the server API for Greeter service.
-// All implementations must embed UnimplementedGreeterServer
+func (c *taskExecutionClient) GetTaskStatus(ctx context.Context, in *TaskStatusRequest, opts ...grpc.CallOption) (*TaskResponse, error) {
+	out := new(TaskResponse)
+	err := c.cc.Invoke(ctx, "/helloworld.TaskExecution/GetTaskStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// TaskExecutionServer is the server API for TaskExecution service.
+// All implementations must embed UnimplementedTaskExecutionServer
 // for forward compatibility
-type GreeterServer interface {
+type TaskExecutionServer interface {
 	// Sends a greeting
-	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
-	mustEmbedUnimplementedGreeterServer()
+	ExecuteTask(context.Context, *TaskExecutionRequest) (*TaskResponse, error)
+	GetTaskStatus(context.Context, *TaskStatusRequest) (*TaskResponse, error)
+	mustEmbedUnimplementedTaskExecutionServer()
 }
 
-// UnimplementedGreeterServer must be embedded to have forward compatible implementations.
-type UnimplementedGreeterServer struct {
+// UnimplementedTaskExecutionServer must be embedded to have forward compatible implementations.
+type UnimplementedTaskExecutionServer struct {
 }
 
-func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+func (UnimplementedTaskExecutionServer) ExecuteTask(context.Context, *TaskExecutionRequest) (*TaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteTask not implemented")
 }
-func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
+func (UnimplementedTaskExecutionServer) GetTaskStatus(context.Context, *TaskStatusRequest) (*TaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTaskStatus not implemented")
+}
+func (UnimplementedTaskExecutionServer) mustEmbedUnimplementedTaskExecutionServer() {}
 
-// UnsafeGreeterServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GreeterServer will
+// UnsafeTaskExecutionServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TaskExecutionServer will
 // result in compilation errors.
-type UnsafeGreeterServer interface {
-	mustEmbedUnimplementedGreeterServer()
+type UnsafeTaskExecutionServer interface {
+	mustEmbedUnimplementedTaskExecutionServer()
 }
 
-func RegisterGreeterServer(s grpc.ServiceRegistrar, srv GreeterServer) {
-	s.RegisterService(&Greeter_ServiceDesc, srv)
+func RegisterTaskExecutionServer(s grpc.ServiceRegistrar, srv TaskExecutionServer) {
+	s.RegisterService(&TaskExecution_ServiceDesc, srv)
 }
 
-func _Greeter_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HelloRequest)
+func _TaskExecution_ExecuteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskExecutionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreeterServer).SayHello(ctx, in)
+		return srv.(TaskExecutionServer).ExecuteTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/helloworld.Greeter/SayHello",
+		FullMethod: "/helloworld.TaskExecution/ExecuteTask",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).SayHello(ctx, req.(*HelloRequest))
+		return srv.(TaskExecutionServer).ExecuteTask(ctx, req.(*TaskExecutionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
+func _TaskExecution_GetTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TaskStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskExecutionServer).GetTaskStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/helloworld.TaskExecution/GetTaskStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskExecutionServer).GetTaskStatus(ctx, req.(*TaskStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// TaskExecution_ServiceDesc is the grpc.ServiceDesc for TaskExecution service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Greeter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "helloworld.Greeter",
-	HandlerType: (*GreeterServer)(nil),
+var TaskExecution_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "helloworld.TaskExecution",
+	HandlerType: (*TaskExecutionServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SayHello",
-			Handler:    _Greeter_SayHello_Handler,
+			MethodName: "ExecuteTask",
+			Handler:    _TaskExecution_ExecuteTask_Handler,
+		},
+		{
+			MethodName: "GetTaskStatus",
+			Handler:    _TaskExecution_GetTaskStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
