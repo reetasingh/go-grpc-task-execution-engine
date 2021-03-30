@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package task;
 
-option go_package = "go-grpc-task-execution-engine/pkg/helloworld";
+option go_package = "go-grpc-task-execution-engine/pkg/task";
 
 // The greeting service definition.
 service TaskExecution {
