@@ -36,7 +36,7 @@ func main() {
 	    if err != nil {
 		    log.Fatalf("could not start: %v", err)
 	    }
-	    log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
+	    log.Printf("UUID: %s, Name: %s, Status: %s, Details: %s", r.GetUuid(), r.GetName(), r.GetStatus(), r.GetDetails())
 	} else if action == "stop" {
 
 	    uuid := os.Args[2]
@@ -44,14 +44,14 @@ func main() {
 	    if err != nil {
 		    log.Fatalf("could not cancel: %v", err)
 	    }
-	    log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
+	    log.Printf("UUID: %s, Name: %s, Status: %s, Details: %s", r.GetUuid(), r.GetName(), r.GetStatus(), r.GetDetails())
 	} else if action == "status" {
 	    uuid := os.Args[2]
 	    r, err := c.GetTaskStatus(ctx, &pb.TaskStatusRequest{Uuid: uuid})
 	    if err != nil {
 		    log.Fatalf("could not get status: %v", err)
 	    }
-	    log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
+	    log.Printf("UUID: %s, Name: %s, Status: %s, Details: %s", r.GetUuid(), r.GetName(), r.GetStatus(), r.GetDetails())
 	}
 
 }

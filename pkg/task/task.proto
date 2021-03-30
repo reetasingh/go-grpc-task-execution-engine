@@ -4,7 +4,7 @@ package task;
 
 option go_package = "go-grpc-task-execution-engine/pkg/task";
 
-// The greeting service definition.
+// The task execution service definition.
 service TaskExecution {
   // Sends a greeting
   rpc ExecuteTask (TaskExecutionRequest) returns (TaskResponse) {}
@@ -27,4 +27,5 @@ message TaskResponse {
   string uuid = 1;
   string status = 2;
   string details = 3;
+  string name = 4;
 }

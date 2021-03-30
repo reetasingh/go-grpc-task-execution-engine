@@ -21,17 +21,18 @@ type server struct {
 
 func (s *server) ExecuteTask(ctx context.Context, in *pb.TaskExecutionRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received Request to Execute Task: %v", in.GetName())
-	return &pb.TaskResponse{Uuid: "1", Status: "RECEIVED", Details: "Recieved by Server"}, nil
+	taskResponse := pb.TaskResponse{Uuid: "1", Status: "RECEIVED", Details: "Recieved by Server", Name: in.GetName()}
+	return &taskResponse, nil
 }
 
 func (s *server) GetTaskStatus(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received Request for Task Status: %v", in.GetUuid())
-	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "RECEIVED", Details: "Recieved by Server"}, nil
+	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "RECEIVED", Details: "Recieved by Server", Name: "change me"}, nil
 }
 
 func (s *server) CancelTask(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received Request to Cancel Task: %v", in.GetUuid())
-	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "CANCELLED", Details: "Task Successfully Cancelled"}, nil
+	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "CANCELLED", Details: "Task Successfully Cancelled", Name: "change me"}, nil
 }
 
 func main() {
