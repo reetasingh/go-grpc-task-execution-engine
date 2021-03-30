@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package helloworld;
+package task;
 
 option go_package = "go-grpc-task-execution-engine/pkg/helloworld";
 

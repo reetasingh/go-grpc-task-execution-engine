@@ -9,12 +9,11 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
-	pb "go-grpc-task-execution-engine/pkg/helloworld"
+	pb "go-grpc-task-execution-engine/pkg/task"
 )
 
 const (
 	address     = "localhost:50051"
-	defaultName = "world"
 )
 
 func main() {
@@ -26,16 +25,33 @@ func main() {
 	defer conn.Close()
 	c := pb.NewTaskExecutionClient(conn)
 
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
+	action := os.Args[1]
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.ExecuteTask(ctx, &pb.TaskExecutionRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+
+	if action == "start" {
+	    name := os.Args[2]
+	    r, err := c.ExecuteTask(ctx, &pb.TaskExecutionRequest{Name: name})
+	    if err != nil {
+		    log.Fatalf("could not start: %v", err)
+	    }
+	    log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
+	} else if action == "stop" {
+
+	    uuid := os.Args[2]
+	    r, err := c.CancelTask(ctx, &pb.TaskStatusRequest{Uuid: uuid})
+	    if err != nil {
+		    log.Fatalf("could not cancel: %v", err)
+	    }
+	    log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
+	} else if action == "status" {
+	    uuid := os.Args[2]
+	    r, err := c.GetTaskStatus(ctx, &pb.TaskStatusRequest{Uuid: uuid})
+	    if err != nil {
+		    log.Fatalf("could not get status: %v", err)
+	    }
+	    log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
 	}
-	log.Printf("UUID: %s, Status: %s, Details: %s", r.GetUuid(), r.GetStatus(), r.GetDetails())
+
 }
