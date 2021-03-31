@@ -1,32 +1,56 @@
-# run client
+# run server (another terminal)
 ```bash
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go start abc
-2021/03/29 19:04:12 UUID: 1, Status: RECEIVED, Details: Recieved by Server
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go status 1
-2021/03/29 19:04:25 UUID: 1, Status: RECEIVED, Details: Recieved by Server
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go stop 1
-2021/03/29 19:04:38 UUID: 1, Status: CANCELLED, Details: Task Successfully Cancelled
-reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/server/main.go 
+2021/03/30 20:28:45 Received Request to Execute Task: abc
+2021/03/30 20:28:55 Received Request to Cancel Task: abc
+2021/03/30 20:29:00 Received Request for Task Status: abc
+2021/03/30 20:29:05 Received Request for Task Status: abc
+2021/03/30 20:29:18 Received Request to Execute Task: pqr
+2021/03/30 20:29:33 Received Request for Task Status: pqr
+2021/03/30 20:29:37 Received Request for Task Status: abc
+2021/03/30 20:31:08 Received Request for Task Status: abc
 
 ```
 
-# run server (another terminal)
+
+# run client
 ```bash
-reetasingh-ltm8:cmd reetasingh$ go run server/main.go 
-2021/03/29 18:57:07 Received Request to Cancel Task: 1
-2021/03/29 18:57:23 Received Request for Task Status: 1
-2021/03/29 18:58:02 Received Request for Task Status: 1
-2021/03/29 18:58:08 Received Request for Task Status: 1
-2021/03/29 18:58:24 Received Request for Task Status: 2
-2021/03/29 19:03:30 Received Request for Task Status: 1
-2021/03/29 19:04:12 Received Request to Execute Task: abc
-2021/03/29 19:04:25 Received Request for Task Status: 1
-2021/03/29 19:04:38 Received Request to Cancel Task: 1
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go start abc
+2021/03/30 20:28:45 UUID: abc, Name: abc, Status: RECEIVED, Details: Recieved by Server
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go stop abc
+2021/03/30 20:28:55 UUID: abc, Name: abc, Status: CANCELLED, Details: Task Successfully Cancelled
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go status abc
+2021/03/30 20:29:00 UUID: abc, Name: abc, Status: CANCELLED, Details: Task Successfully Cancelled
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go status abc
+2021/03/30 20:29:05 UUID: abc, Name: abc, Status: CANCELLED, Details: Task Successfully Cancelled
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go start pqr
+2021/03/30 20:29:18 UUID: pqr, Name: pqr, Status: RECEIVED, Details: Recieved by Server
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go status pqr
+2021/03/30 20:29:33 UUID: pqr, Name: pqr, Status: RECEIVED, Details: Recieved by Server
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go status abc
+2021/03/30 20:29:37 UUID: abc, Name: abc, Status: CANCELLED, Details: Task Successfully Cancelled
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go status abc
+2021/03/30 20:31:08 UUID: abc, Name: abc, Status: CANCELLED, Details: Task Successfully Cancelled
+reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ 
 
 
 ```

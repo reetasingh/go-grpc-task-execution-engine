@@ -6,7 +6,6 @@ import (
 	"context"
 	"log"
 	"net"
-
 	"google.golang.org/grpc"
 	pb "go-grpc-task-execution-engine/pkg/task"
 )
@@ -15,24 +14,61 @@ const (
 	port = ":50051"
 )
 
-type server struct {
+type TaskExecutionServer struct {
 	pb.UnimplementedTaskExecutionServer
+	taskMap map[string]*pb.TaskResponse
 }
 
-func (s *server) ExecuteTask(ctx context.Context, in *pb.TaskExecutionRequest) (*pb.TaskResponse, error) {
+type TaskNotFoundError struct {
+    key string
+}
+
+func (t *TaskNotFoundError) Error() string {
+    return "Key not found in map"
+}
+
+func NewTaskNotFoundError(key string) *TaskNotFoundError {
+    var t TaskNotFoundError
+    t.key = key
+    return &t
+}
+
+
+func NewTaskExecutionServer() *TaskExecutionServer {
+    var s TaskExecutionServer
+    s.taskMap = make(map[string]*pb.TaskResponse)
+    return &s
+}
+
+func (s *TaskExecutionServer) ExecuteTask(ctx context.Context, in *pb.TaskExecutionRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received Request to Execute Task: %v", in.GetName())
-	taskResponse := pb.TaskResponse{Uuid: "1", Status: "RECEIVED", Details: "Recieved by Server", Name: in.GetName()}
+
+	taskResponse := pb.TaskResponse{Uuid: in.GetName(), Status: "RECEIVED", Details: "Recieved by Server", Name: in.GetName()}
+	s.taskMap[in.GetName()] = &taskResponse
 	return &taskResponse, nil
 }
 
-func (s *server) GetTaskStatus(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
+func (s *TaskExecutionServer) GetTaskStatus(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received Request for Task Status: %v", in.GetUuid())
-	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "RECEIVED", Details: "Recieved by Server", Name: "change me"}, nil
+
+	if val, ok := s.taskMap[in.GetUuid()]; ok {
+	    return val, nil
+    }
+    err := NewTaskNotFoundError(in.GetUuid())
+
+    return nil, err
 }
 
-func (s *server) CancelTask(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
+func (s *TaskExecutionServer) CancelTask(ctx context.Context, in *pb.TaskStatusRequest) (*pb.TaskResponse, error) {
 	log.Printf("Received Request to Cancel Task: %v", in.GetUuid())
-	return &pb.TaskResponse{Uuid: in.GetUuid(), Status: "CANCELLED", Details: "Task Successfully Cancelled", Name: "change me"}, nil
+	if val, ok := s.taskMap[in.GetUuid()]; ok {
+	    val.Status = "CANCELLED"
+	    val.Details = "Task Successfully Cancelled"
+	    return val, nil
+    }
+
+	err := NewTaskNotFoundError(in.GetUuid())
+    return nil, err
 }
 
 func main() {
@@ -41,7 +77,8 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterTaskExecutionServer(s, &server{})
+	newServer := NewTaskExecutionServer()
+	pb.RegisterTaskExecutionServer(s, newServer)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
