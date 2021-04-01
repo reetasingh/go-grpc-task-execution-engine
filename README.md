@@ -1,4 +1,11 @@
-# run server (another terminal)
+## A simple application which mimics task execution using GRPC communication between client and server
+
+1. Client sends request to start a task Server and server sends back status of Task
+2. Client queries status of Task and server sends back the status
+3. Client sends request to cancel Task and server updates task status and returns status of Task
+
+
+# run server 
 ```bash
 reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/server/main.go 
 2021/03/30 20:28:45 Received Request to Execute Task: abc
@@ -13,7 +20,7 @@ reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/server/main
 ```
 
 
-# run client
+# run client (another terminal)
 ```bash
 reetasingh-ltm8:go-grpc-task-execution-engine reetasingh$ go run cmd/client/main.go start abc
 2021/03/30 20:28:45 UUID: abc, Name: abc, Status: RECEIVED, Details: Recieved by Server
